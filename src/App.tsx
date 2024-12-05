@@ -1,30 +1,37 @@
 import { useState } from "react";
 import "./App.css";
 import AccessibilityButton from "./components/AccessibilityButton.jsx";
-import { createTheme, ThemeProvider, Typography } from "@mui/material";
+import {
+  createTheme,
+  responsiveFontSizes,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
 
-const theme = createTheme({
-  typography: {
-    h1: {
-      fontSize: "var(--bigger-text, 96px)",
-      lineHeight: "var(--line-height, 1.5)",
-      wordSpacing: "var(--word-spacing, normal)",
-      letterSpacing: "var(--text-spacing, normal)",
+let theme = responsiveFontSizes(
+  createTheme({
+    typography: {
+      h1: {
+        fontSize: "var(--bigger-text)",
+        lineHeight: "1.5",
+        wordSpacing: "var(--word-spacing)",
+        letterSpacing: "var(--text-spacing)",
+      },
+      body1: {
+        fontSize: "var(--bigger-text)",
+        lineHeight: "1.5",
+        wordSpacing: "var(--word-spacing)",
+        letterSpacing: "var(--text-spacing)",
+      },
+      sideMenuText: {
+        fontSize: "16px",
+        lineHeight: "1.5",
+        wordSpacing: "normal",
+        letterSpacing: "normal",
+      },
     },
-    body1: {
-      fontSize: "var(--bigger-text, 1em)",
-      lineHeight: "var(--line-height, 1.5)",
-      wordSpacing: "var(--word-spacing, normal)",
-      letterSpacing: "var(--text-spacing, normal)",
-    },
-    sideMenuText: {
-      fontSize: "16px",
-      lineHeight: "1.5",
-      wordSpacing: "normal",
-      letterSpacing: "normal",
-    },
-  },
-});
+  })
+);
 
 function App() {
   return (
@@ -43,7 +50,10 @@ function App() {
         of Lorem Ipsum.
       </p>
       <AccessibilityButton />
-      <Typography variant="h1">
+      <Typography
+        variant="h1"
+        sx={{ fontSize: "calc(var(--bigger-text, initial) * 96px)" }}
+      >
         This is a heading with dynamic font size
       </Typography>
       <Typography variant="body1">Body 1</Typography>

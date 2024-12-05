@@ -7,7 +7,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Fab } from "@mui/material";
+import { Fab, Paper } from "@mui/material";
 
 // Icons
 import SpatialAudioIcon from "@mui/icons-material/SpatialAudio";
@@ -147,13 +147,12 @@ const AccessibilityButton = () => {
     document.documentElement.style.setProperty("--text-align", textAlign);
 
     // Apply Bigger Text
-    const biggerText =
-      biggerTextState === 0
-        ? "normal" // Use the default font size of the tag
-        : biggerTextState === 1
-        ? "1.25em" // Scale up by 25%
-        : "1.5em"; // Scale up by 50%
-    document.documentElement.style.setProperty("--bigger-text", biggerText);
+    if (biggerTextState === 0) {
+      document.documentElement.style.setProperty("--bigger-text", "initial");
+    } else {
+      const biggerText = biggerTextState === 1 ? "1.25em" : "1.5em";
+      document.documentElement.style.setProperty("--bigger-text", biggerText);
+    }
 
     // Apply Word Spacing
     const wordSpacing =
@@ -188,6 +187,7 @@ const AccessibilityButton = () => {
     updateGlobalStyles();
   }, [underlineStates]);
 
+  // Replace if statements with switch case perhaps?
   const handleMenuItemClick = (text) => {
     const index = underlineOptions.indexOf(text);
 
@@ -234,16 +234,15 @@ const AccessibilityButton = () => {
   );
 
   const list = (
-    <Box
-      sx={{ width: 250 }}
-      role="presentation"
-      onKeyDown={(event) => {
-        if (event.key === "Escape") {
-          setIsOpen(false);
-        }
-      }}
-    >
-      <List>
+    <Box role="presentation">
+      <List
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr", // 2 equal-width columns
+          gap: "16px", // Space between items
+          padding: "16px", // Add padding around the grid
+        }}
+      >
         {[
           ...underlineOptions,
           "Screen Reader",
@@ -255,38 +254,50 @@ const AccessibilityButton = () => {
           const hasUnderline = index !== -1;
 
           return (
-            <ListItem key={text} disablePadding>
-              <ListItemButton
-                onClick={() => handleMenuItemClick(text)}
-                sx={{
-                  padding: "8px 16px", // Set fixed padding
-                  height: "48px", // Or set a fixed height
-                  minHeight: "48px", // Ensures consistency
-                }}
-              >
-                <ListItemIcon>
-                  {text === "Text Align" ? icons[text][textAlign] : icons[text]}
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <>
-                      <Typography
-                        variant="sideMenuText"
-                        sx={{
-                          lineHeight: "1.5", // Set a fixed line height
-                          padding: 0, // Remove extra padding
-                        }}
-                      >
-                        {text}
-                      </Typography>
-                      {hasUnderline && (
-                        <LineContainer activeIndex={underlineStates[index]} />
-                      )}
-                    </>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
+            <Paper
+              key={text}
+              elevation={1} // Adds shadow for a card effect
+              sx={{
+                padding: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+              }}
+            >
+              <ListItem disablePadding sx={{ width: "100%" }}>
+                <ListItemButton
+                  onClick={() => handleMenuItemClick(text)}
+                  sx={{
+                    padding: 0,
+                    minHeight: "48px", // Ensures a consistent height
+                  }}
+                >
+                  <ListItemIcon>
+                    {text === "Text Align"
+                      ? icons[text][textAlign]
+                      : icons[text]}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <>
+                        <Typography
+                          variant="sideMenuText"
+                          sx={{
+                            lineHeight: "1.5",
+                            padding: 0,
+                          }}
+                        >
+                          {text}
+                        </Typography>
+                        {hasUnderline && (
+                          <LineContainer activeIndex={underlineStates[index]} />
+                        )}
+                      </>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Paper>
           );
         })}
       </List>
