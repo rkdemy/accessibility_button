@@ -41,7 +41,7 @@ body {
 }
 
 h1 {
-  /* font-size: 3.2em; */
+  font-size: var(--bigger-text, 96px);
   /* line-height: 1.1; */
 }
 

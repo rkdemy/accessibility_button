@@ -58,7 +58,7 @@ const AccessibilityButton = () => {
   );
   const [textAlign, setTextAlign] = useState("left");
   const [pageStructure, setPageStructure] = useState([]);
-
+  const [isScreenReaderActive, setScreenReaderActive] = useState(false);
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -178,12 +178,36 @@ const AccessibilityButton = () => {
   };
 
   useEffect(() => {
-    // Apply default styles on mount
+    const handleClick = (event) => {
+      if (!isScreenReaderActive) return;
+
+      window.speechSynthesis.cancel();
+
+      const text =
+        event.target.innerText || event.target.alt || "No readable content";
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    };
+
+    if (isScreenReaderActive) {
+      document.addEventListener("click", handleClick);
+    } else {
+      document.removeEventListener("click", handleClick);
+      window.speechSynthesis.cancel();
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+      window.speechSynthesis.cancel();
+    };
+  }, [isScreenReaderActive]);
+
+  useEffect(() => {
     updateGlobalStyles();
   }, []);
 
   useEffect(() => {
-    // Apply styles whenever underlineStates changes
     updateGlobalStyles();
   }, [underlineStates]);
 
@@ -208,13 +232,19 @@ const AccessibilityButton = () => {
         prev.map((state, i) => (i === index ? (state + 1) % 3 : state))
       );
     } else if (text === "Bigger Cursor") {
-      console.log(isCustomCursor);
       setIsCustomCursor((prev) => !prev);
       setUnderlineStates((prev) =>
         prev.map((state, i) => (i === index ? (state + 1) % 3 : state))
       );
     } else if (text === "Site Map") {
       handleOpen();
+    } else if (text === "Screen Reader") {
+      setScreenReaderActive((prev) => {
+        if (prev) {
+          window.speechSynthesis.cancel();
+        }
+        return !prev;
+      });
     }
   };
 
@@ -238,9 +268,9 @@ const AccessibilityButton = () => {
       <List
         sx={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr", // 2 equal-width columns
-          gap: "16px", // Space between items
-          padding: "16px", // Add padding around the grid
+          gridTemplateColumns: "1fr 1fr",
+          gap: "16px",
+          padding: "16px",
         }}
       >
         {[
@@ -256,7 +286,7 @@ const AccessibilityButton = () => {
           return (
             <Paper
               key={text}
-              elevation={1} // Adds shadow for a card effect
+              elevation={1}
               sx={{
                 padding: "8px",
                 display: "flex",
@@ -269,7 +299,7 @@ const AccessibilityButton = () => {
                   onClick={() => handleMenuItemClick(text)}
                   sx={{
                     padding: 0,
-                    minHeight: "48px", // Ensures a consistent height
+                    minHeight: "48px",
                   }}
                 >
                   <ListItemIcon>

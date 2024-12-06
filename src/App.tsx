@@ -52,7 +52,7 @@ function App() {
       <AccessibilityButton />
       <Typography
         variant="h1"
-        sx={{ fontSize: "calc(var(--bigger-text, initial) * 96px)" }}
+        // sx={{ fontSize: "calc(var(--bigger-text, initial) * 96px)" }}
       >
         This is a heading with dynamic font size
       </Typography>
